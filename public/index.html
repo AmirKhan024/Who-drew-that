@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Who Drew That?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<div class="grain-overlay"></div>
+
+<!-- ============ START SCREEN ============ -->
+<section id="screen-start" class="screen active">
+  <div class="case-card start-card">
+    <h1 class="logo">Who Drew<span class="logo-accent">That?</span></h1>
+    <p class="tagline">One shared canvas. One liar. Ten seconds to be convincing.</p>
+
+    <div class="field-group">
+      <label for="player-name">Your name</label>
+      <input id="player-name" type="text" maxlength="16" placeholder="e.g. Meera" />
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="create">Create Room</button>
+      <button class="tab-btn" data-tab="join">Join Room</button>
+    </div>
+
+    <div id="tab-create" class="tab-panel active">
+      <label>How many players?</label>
+      <div class="player-count-row" id="player-count-row">
+        <button class="count-btn" data-count="4">4</button>
+        <button class="count-btn" data-count="5">5</button>
+        <button class="count-btn" data-count="6">6</button>
+        <button class="count-btn" data-count="7">7</button>
+        <button class="count-btn" data-count="8">8</button>
+      </div>
+      <button id="btn-create-room" class="btn-primary">Create Private Room</button>
+    </div>
+
+    <div id="tab-join" class="tab-panel">
+      <label for="room-code-input">Room code</label>
+      <input id="room-code-input" type="text" maxlength="5" placeholder="e.g. F3K9P" class="mono-input" />
+      <button id="btn-join-room" class="btn-primary">Join Room</button>
+    </div>
+
+    <p id="start-error" class="error-text"></p>
+  </div>
+</section>
+
+<!-- ============ LOBBY SCREEN ============ -->
+<section id="screen-lobby" class="screen">
+  <div class="case-card lobby-card">
+    <div class="lobby-header">
+      <div>
+        <p class="eyebrow">Case File</p>
+        <h2 class="room-code-stamp" id="lobby-room-code">-----</h2>
+      </div>
+      <button id="btn-copy-code" class="btn-ghost">Copy Code</button>
+    </div>
+
+    <p class="lobby-sub" id="lobby-count-label">Waiting for suspects...</p>
+
+    <ul id="lobby-player-list" class="player-list"></ul>
+
+    <button id="btn-ready" class="btn-primary">Ready Up</button>
+    <button id="btn-start-game" class="btn-primary btn-accent hidden">Start Game</button>
+    <p class="hint-text">The host starts the game once everyone is ready.</p>
+  </div>
+</section>
+
+<!-- ============ GAME SCREEN ============ -->
+<section id="screen-game" class="screen">
+  <header class="game-topbar">
+    <div class="round-info">
+      <span class="eyebrow">Round</span>
+      <span id="round-label" class="mono-lg">1 / 5</span>
+    </div>
+    <div class="phase-banner" id="phase-banner">Drawing Phase</div>
+    <div class="timer-wrap">
+      <span class="eyebrow">Time</span>
+      <div class="timer-bar-track"><div id="timer-bar" class="timer-bar-fill"></div></div>
+    </div>
+  </header>
+
+  <div class="game-body">
+    <div class="canvas-panel">
+      <div class="canvas-frame">
+        <canvas id="draw-canvas" width="800" height="560"></canvas>
+      </div>
+      <div class="turn-nameplate" id="turn-nameplate">Waiting...</div>
+      <div class="word-chip" id="word-chip">Your word: <strong id="word-chip-value">???</strong></div>
+    </div>
+
+    <aside class="side-panel">
+      <!-- Waiting / turn order info -->
+      <div id="panel-drawing" class="panel-view">
+        <h3>Draw Order</h3>
+        <ol id="turn-order-list" class="turn-order-list"></ol>
+      </div>
+
+      <!-- Discussion chat -->
+      <div id="panel-discussion" class="panel-view hidden">
+        <h3>Discuss — who looked sus?</h3>
+        <div id="chat-log" class="chat-log"></div>
+        <div class="chat-input-row">
+          <input id="chat-input" type="text" maxlength="200" placeholder="Type here..." />
+          <button id="btn-send-chat" class="btn-primary btn-small">Send</button>
+        </div>
+      </div>
+
+      <!-- Voting -->
+      <div id="panel-voting" class="panel-view hidden">
+        <h3>Cast Your Vote</h3>
+        <ul id="vote-list" class="vote-list"></ul>
+        <p id="vote-progress" class="hint-text">0 / 0 votes in</p>
+      </div>
+
+      <!-- Reveal -->
+      <div id="panel-reveal" class="panel-view hidden">
+        <div class="reveal-stamp" id="reveal-stamp">CAUGHT</div>
+        <h3 id="reveal-title">Player X was the Liar!</h3>
+        <p id="reveal-words" class="hint-text"></p>
+        <h4>Scoreboard</h4>
+        <ul id="reveal-scores" class="score-list"></ul>
+      </div>
+
+      <!-- Game over -->
+      <div id="panel-gameover" class="panel-view hidden">
+        <h3 class="winner-title" id="winner-title">Winner!</h3>
+        <ul id="final-scores" class="score-list"></ul>
+        <button id="btn-play-again" class="btn-primary">Back to Start</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/canvas.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
