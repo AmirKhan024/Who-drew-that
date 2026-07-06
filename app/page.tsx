@@ -9,6 +9,7 @@ import DoodleBg from "@/components/ui/DoodleBg";
 import DoodleButton from "@/components/ui/DoodleButton";
 import StickyCard from "@/components/ui/StickyCard";
 import WobbleInput from "@/components/ui/WobbleInput";
+import PencilMascot from "@/components/ui/PencilMascot";
 import { getIdentity, randomAvatarSeed, saveIdentity } from "@/lib/identity";
 
 export default function Home() {
@@ -55,6 +56,15 @@ export default function Home() {
 
       <StickyCard color="paper" tilt={-1} seed={21} className="mt-7 w-full max-w-sm">
         <div className="flex flex-col items-center gap-5">
+          <motion.div
+            initial={{ scale: 0.6, y: -8, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 240, damping: 12 }}
+            className="-mb-1 mt-1"
+          >
+            <PencilMascot size={68} />
+          </motion.div>
+
           <WobbleInput
             aria-label="Your name"
             placeholder="Your name…"
