@@ -5,6 +5,7 @@
 
 const KEY = "wdt.identity";
 const PID_KEY = "wdt.pid";
+const SECRET_KEY = "wdt.secret";
 
 export interface Identity {
   name: string;
@@ -30,6 +31,21 @@ export function randomAvatarSeed(): string {
   const arr = new Uint32Array(2);
   crypto.getRandomValues(arr);
   return `${arr[0].toString(36)}${arr[1].toString(36)}`;
+}
+
+/**
+ * A per-browser capability token. The server stores it (deny-anon) and requires
+ * it before returning this player's private word — so no one can fetch another
+ * player's word even by guessing their id.
+ */
+export function getPlayerSecret(): string {
+  if (typeof window === "undefined") return "";
+  let s = localStorage.getItem(SECRET_KEY);
+  if (!s) {
+    s = crypto.randomUUID() + crypto.randomUUID();
+    localStorage.setItem(SECRET_KEY, s);
+  }
+  return s;
 }
 
 export function getIdentity(): Identity | null {

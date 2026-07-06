@@ -24,6 +24,13 @@ export const SCORING = {
   IMPOSTER_ESCAPE_POINTS: 150,
 } as const;
 
+// Fixed phase durations (seconds) not covered by host settings.
+export const PHASE_SECONDS = {
+  word: 6, // "here's your word" reveal before drawing
+  reveal: 9, // imposter + scores reveal
+  scoreboard: 6, // standings between rounds
+} as const;
+
 /** Max imposters allowed for a given real player count. */
 export function maxImpostersFor(playerCount: number): number {
   return Math.max(1, Math.floor((playerCount - 1) / 2));

@@ -14,11 +14,12 @@ import RoughBox from "@/components/ui/RoughBox";
 import { normalizeRoomCode } from "@/lib/roomCode";
 import { getIdentity } from "@/lib/identity";
 import { useRoom } from "@/lib/useRoom";
-import { joinRoom, leaveRoom, setReady, startGame } from "@/lib/rooms";
+import { claimHost, joinRoom, leaveRoom, setReady, startGame } from "@/lib/rooms";
 import { canStartGame } from "@/lib/game/settings";
 import { PLAYER_LIMITS, maxImpostersFor } from "@/lib/game/constants";
 import { celebrate } from "@/lib/confetti";
 import type { PlayerRow } from "@/lib/supabase/types";
+import GameScreen from "@/components/game/GameScreen";
 
 export default function RoomPage({
   params,
@@ -32,6 +33,7 @@ export default function RoomPage({
     useRoom(code);
   const [copied, setCopied] = useState(false);
   const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
   const autoJoinTried = useRef(false);
   const prevAllReady = useRef(false);
 
@@ -48,6 +50,19 @@ export default function RoomPage({
     }
     if (room.status === "lobby") joinRoom(code, identity);
   }, [loading, configured, room, me, code, router]);
+
+  // Host migration: if the host is offline and I'm the earliest online player,
+  // ask the server to re-pick the host. Fires once per stale host_id.
+  const claimedFor = useRef<string>("");
+  useEffect(() => {
+    if (!room || !uid || onlineIds.size === 0) return;
+    if (onlineIds.has(room.host_id)) return; // host present
+    const earliestOnline = players.find((p) => onlineIds.has(p.id));
+    if (earliestOnline?.id !== uid) return;
+    if (claimedFor.current === room.host_id) return;
+    claimedFor.current = room.host_id;
+    claimHost(code, Array.from(onlineIds));
+  }, [room, uid, onlineIds, players, code]);
 
   const allReady =
     players.length >= PLAYER_LIMITS.MIN && players.every((p) => p.is_ready);
@@ -73,13 +88,18 @@ export default function RoomPage({
   };
 
   const onLeave = async () => {
-    if (uid) await leaveRoom(uid);
+    await leaveRoom(code);
     router.push("/");
   };
 
   const onStart = async () => {
     setStarting(true);
-    await startGame(code);
+    setStartError(null);
+    const res = await startGame(code);
+    if (!res.ok) {
+      setStartError(res.error ?? "Couldn't start. Try again.");
+      setStarting(false);
+    }
   };
 
   // ---- render states -------------------------------------------------
@@ -118,7 +138,35 @@ export default function RoomPage({
   }
 
   if (room.status !== "lobby") {
-    return <GameComingSoon code={code} />;
+    if (!me) {
+      return (
+        <Shell>
+          <StickyCard color="yellow" tilt={-1.5} className="max-w-sm text-center">
+            <div className="text-5xl">🎬</div>
+            <h2 className="font-display mt-2 text-2xl">Game in progress</h2>
+            <p className="font-hand mt-1 text-lg text-ink-soft">
+              This room already started a game. Hang tight for the next one, or
+              start your own!
+            </p>
+            <div className="mt-4">
+              <Link href="/">
+                <DoodleButton variant="green">Back to start</DoodleButton>
+              </Link>
+            </div>
+          </StickyCard>
+        </Shell>
+      );
+    }
+    return (
+      <GameScreen
+        code={code}
+        room={room}
+        players={players}
+        me={me}
+        isHost={me.is_host}
+        onlineIds={onlineIds}
+      />
+    );
   }
 
   const isHost = me?.is_host ?? false;
@@ -240,6 +288,11 @@ export default function RoomPage({
                   ? "Waiting for everyone to be ready…"
                   : `Everyone's ready! (up to ${maxImp} imposters possible)`}
             </p>
+            {startError && (
+              <p className="font-hand text-center text-base text-crayon-red">
+                ⚠️ {startError}
+              </p>
+            )}
           </>
         )}
 
@@ -293,26 +346,6 @@ function PlayerRowItem({
         {player.is_ready ? "✅" : "⏳"}
       </span>
     </motion.li>
-  );
-}
-
-function GameComingSoon({ code }: { code: string }) {
-  return (
-    <Shell>
-      <StickyCard color="green" tilt={-1.5} tape className="max-w-md text-center">
-        <div className="text-6xl">🎨</div>
-        <h2 className="font-display mt-2 text-3xl">The game is starting!</h2>
-        <p className="font-hand mt-2 text-lg text-ink-soft">
-          Room <b>{code}</b> has begun. The live drawing board, discussion, voting
-          and reveal are coming in the next build — this is the lobby foundation.
-        </p>
-        <div className="mt-5">
-          <Link href="/">
-            <DoodleButton variant="blue">Back to start</DoodleButton>
-          </Link>
-        </div>
-      </StickyCard>
-    </Shell>
   );
 }
 

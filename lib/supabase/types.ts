@@ -2,11 +2,52 @@ import type { GameSettings } from "@/lib/game/settings";
 
 export type RoomStatus = "lobby" | "in_game" | "ended";
 
+export type GamePhase =
+  | "lobby"
+  | "word"
+  | "drawing"
+  | "discussion"
+  | "voting"
+  | "reveal"
+  | "scoreboard"
+  | "starting"
+  | "ended";
+
+export interface RevealPayload {
+  roundNumber: number;
+  crewWord: string;
+  imposterWord: string;
+  imposterIds: string[];
+  accusedId: string | null;
+  counts: Record<string, number>;
+  deltas: Record<string, number>;
+  crewCaught: boolean;
+}
+
 export interface RoomRow {
   code: string;
   host_id: string;
   settings: GameSettings;
   status: RoomStatus;
+  created_at: string;
+  // game-loop columns
+  phase: GamePhase;
+  current_round: number;
+  total_rounds: number;
+  turn_order: string[];
+  turn_index: number;
+  phase_ends_at: string | null;
+  reveal: RevealPayload | null;
+}
+
+export interface StrokeRow {
+  id: string;
+  room_code: string;
+  round_number: number;
+  player_id: string;
+  seq: number;
+  color: string;
+  points: { x: number; y: number }[];
   created_at: string;
 }
 
