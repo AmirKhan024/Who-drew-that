@@ -109,15 +109,17 @@ export async function POST(req: Request) {
           .eq("room_code", roomCode);
         const { data: votes } = await admin
           .from("votes")
-          .select("target_id")
+          .select("voter_id, target_id")
           .eq("round_id", roundRow!.id);
 
         const playerIds = (players ?? []).map((p: { id: string }) => p.id);
         const imposterIds = (roundRow!.imposter_ids as string[]) ?? [];
-        const tally = tallyVotes(votes ?? []);
+        const voteRows = (votes ?? []) as { voter_id: string; target_id: string }[];
+        const tally = tallyVotes(voteRows);
         const { crewCaught, deltas } = computeScores(
           playerIds,
           imposterIds,
+          voteRows,
           tally.accusedId,
         );
 

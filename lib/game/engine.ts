@@ -74,27 +74,49 @@ export function tallyVotes(
 }
 
 export interface RoundResult {
+  /** True if the accused (most-voted) player was an imposter. */
   crewCaught: boolean;
   deltas: Record<string, number>;
 }
 
 /**
- * Crew wins the round if the accused player is an imposter. Winners get points.
+ * Individual-accuracy scoring (tiered, so it's not winner-take-all):
+ *  - a CREW member who voted for ANY imposter earns CREW_CORRECT_VOTE;
+ *    crew who voted wrong or didn't vote earn 0.
+ *  - an IMPOSTER who survived (isn't the single most-voted player) earns
+ *    IMPOSTER_SURVIVE + IMPOSTER_FOOL_BONUS per crew member they fooled
+ *    (crew who voted for someone other than that imposter);
+ *    a caught imposter (the accused) earns 0.
  */
 export function computeScores(
   allPlayerIds: string[],
   imposterIds: string[],
+  votes: ReadonlyArray<{ voter_id: string; target_id: string }>,
   accusedId: string | null,
 ): RoundResult {
   const impSet = new Set(imposterIds);
-  const crewCaught = accusedId != null && impSet.has(accusedId);
+  const crewIds = allPlayerIds.filter((id) => !impSet.has(id));
+  const voteOf: Record<string, string> = {};
+  for (const v of votes) voteOf[v.voter_id] = v.target_id;
+
   const deltas: Record<string, number> = {};
   for (const id of allPlayerIds) deltas[id] = 0;
-  if (crewCaught) {
-    for (const id of allPlayerIds)
-      if (!impSet.has(id)) deltas[id] = SCORING.CREW_CATCH_POINTS;
-  } else {
-    for (const id of imposterIds) deltas[id] = SCORING.IMPOSTER_ESCAPE_POINTS;
+
+  // Crew accuracy
+  for (const id of crewIds) {
+    const target = voteOf[id];
+    if (target && impSet.has(target)) deltas[id] += SCORING.CREW_CORRECT_VOTE;
   }
+
+  // Imposter survival + fooling
+  for (const impId of imposterIds) {
+    const caught = accusedId === impId;
+    if (caught) continue; // caught imposter earns nothing
+    deltas[impId] += SCORING.IMPOSTER_SURVIVE;
+    const fooled = crewIds.filter((c) => voteOf[c] !== impId).length;
+    deltas[impId] += fooled * SCORING.IMPOSTER_FOOL_BONUS;
+  }
+
+  const crewCaught = accusedId != null && impSet.has(accusedId);
   return { crewCaught, deltas };
 }

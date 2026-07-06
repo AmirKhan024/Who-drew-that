@@ -222,11 +222,18 @@ export default function DrawingBoard({
   return (
     <div className="flex w-full max-w-3xl flex-col items-center gap-3">
       <div className="flex w-full items-center justify-between px-1">
-        <div className="font-display text-xl">
-          {isMyTurn ? (
-            <span className="text-crayon-green">✏️ Your turn!</span>
-          ) : (
-            <span className="text-ink-soft">✏️ {turnName}</span>
+        <div className="flex items-center gap-2">
+          <div className="font-display text-xl">
+            {isMyTurn ? (
+              <span className="text-crayon-green">✏️ Your turn!</span>
+            ) : (
+              <span className="text-ink-soft">✏️ {turnName}</span>
+            )}
+          </div>
+          {room.phase === "drawing" && (room.turn_order?.length ?? 0) > 0 && (
+            <span className="font-display rounded-full border-2 border-ink bg-white px-2 py-0.5 text-sm text-ink-soft">
+              turn {room.turn_index + 1}/{room.turn_order.length}
+            </span>
           )}
         </div>
         {room.phase === "drawing" && (

@@ -28,7 +28,11 @@ export async function beginRound(
     .eq("room_code", roomCode);
   const used = (prev ?? []).map((r: { crew_word: string }) => r.crew_word);
 
-  const pair = (await generateWordPair(used)) ?? pickWordPair(used);
+  // Curated list is the source of truth (guaranteed easy-to-draw). Groq is
+  // opt-in via env flag since it occasionally emits hard-to-draw words.
+  const useGroq = process.env.ENABLE_GROQ_WORDS === "true";
+  const pair =
+    (useGroq ? await generateWordPair(used) : null) ?? pickWordPair(used);
   const [crewWord, imposterWord] = pair;
   const imposterIds = pickImposters(playerIds, settings.imposterCount);
 

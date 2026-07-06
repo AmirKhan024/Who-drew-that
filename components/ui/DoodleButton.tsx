@@ -59,8 +59,8 @@ export default function DoodleButton({
         fill={fill}
         seed={seed}
         radius={13}
-        roughness={1.7}
-        strokeWidth={2.6}
+        roughness={1.15}
+        strokeWidth={2.4}
       />
       <span
         className="relative z-10 flex items-center gap-2"

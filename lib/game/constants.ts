@@ -18,10 +18,14 @@ export const SETTING_BOUNDS = {
   votingSec: { min: 10, max: 60, default: 20 },
 } as const;
 
-// Scoring
+// Scoring — individual accuracy (not winner-take-all).
 export const SCORING = {
-  CREW_CATCH_POINTS: 100,
-  IMPOSTER_ESCAPE_POINTS: 150,
+  /** A crew member who voted for a real imposter. */
+  CREW_CORRECT_VOTE: 100,
+  /** An imposter who was NOT the most-voted (survived the round). */
+  IMPOSTER_SURVIVE: 150,
+  /** Per crew member an imposter fooled (who voted someone else). */
+  IMPOSTER_FOOL_BONUS: 25,
 } as const;
 
 // Fixed phase durations (seconds) not covered by host settings.

@@ -181,9 +181,18 @@ export async function startGame(
 }
 
 /** Nudge the phase state machine forward (host clock / stall fallback).
- *  `force` fast-forwards only a drawing turn (used to skip an offline drawer). */
-export async function advancePhase(code: string, force = false): Promise<void> {
-  await gamePost("/api/game/advance", { roomCode: code, force });
+ *  `force` fast-forwards only a drawing turn (used to skip an offline drawer).
+ *  Returns whether the server actually advanced (false if it was too early). */
+export async function advancePhase(
+  code: string,
+  force = false,
+): Promise<{ advanced: boolean }> {
+  const res = await gamePost<{ noop?: string }>("/api/game/advance", {
+    roomCode: code,
+    force,
+  });
+  const advanced = res.ok && !res.data?.noop;
+  return { advanced };
 }
 
 /** Fetch ONLY my own word for the current round. */

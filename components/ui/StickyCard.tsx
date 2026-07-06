@@ -41,7 +41,10 @@ export default function StickyCard({
       animate={{ opacity: 1, y: 0, rotate: tilt }}
       transition={{ type: "spring", stiffness: 220, damping: 20 }}
       className={`relative ${className}`}
-      style={{ rotate: `${tilt}deg` }}
+      style={{
+        rotate: `${tilt}deg`,
+        filter: "drop-shadow(2px 4px 0 rgba(42,38,32,0.10))",
+      }}
     >
       <RoughBox fill={NOTE_FILLS[color]} seed={seed} radius={16} />
       {tape && (

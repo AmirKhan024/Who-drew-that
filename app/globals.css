@@ -5,44 +5,47 @@
    --------------------------------------------------------------- */
 
 @theme {
-  /* Surfaces */
-  --color-paper: #fbf3e2;
-  --color-paper-deep: #f3e7cc;
-  --color-ink: #2b2a28;
-  --color-ink-soft: #5b5750;
+  /* Surfaces — warm, refined paper */
+  --color-paper: #faf5ea;
+  --color-paper-deep: #f1e7d3;
+  --color-ink: #2a2620;
+  --color-ink-soft: #6d665b;
 
-  /* Crayon palette */
-  --color-crayon-red: #ff5a5f;
-  --color-crayon-coral: #ff8c66;
-  --color-crayon-yellow: #ffcf3f;
-  --color-crayon-green: #4ac29a;
-  --color-crayon-teal: #2fb8c6;
-  --color-crayon-blue: #4a90e2;
-  --color-crayon-purple: #9b7bea;
-  --color-crayon-pink: #ff7eb6;
+  /* Crayon palette — slightly deepened + harmonised for a premium feel */
+  --color-crayon-red: #ef5f5c;
+  --color-crayon-coral: #f2855e;
+  --color-crayon-yellow: #f4c243;
+  --color-crayon-green: #3fb28a;
+  --color-crayon-teal: #34a6b2;
+  --color-crayon-blue: #4b8ed6;
+  --color-crayon-purple: #8f79e0;
+  --color-crayon-pink: #ef85af;
 
-  /* Sticky-note fills */
-  --color-note-yellow: #fff3a8;
-  --color-note-pink: #ffc7d6;
-  --color-note-blue: #bfe3ff;
-  --color-note-green: #c7f0c2;
+  /* Sticky-note fills — softer */
+  --color-note-yellow: #fdefb4;
+  --color-note-pink: #fbd0dc;
+  --color-note-blue: #d2e7fb;
+  --color-note-green: #d3edcd;
 
   --font-display: var(--font-display), system-ui, sans-serif;
   --font-hand: var(--font-hand), "Comic Sans MS", cursive;
   --font-scribble: var(--font-scribble), cursive;
 
-  --shadow-sticker: 3px 4px 0 rgba(43, 42, 40, 0.85);
-  --shadow-sticker-lg: 6px 7px 0 rgba(43, 42, 40, 0.85);
+  /* Softer layered depth — a hint of sticker offset + gentle ambient shadow */
+  --shadow-sticker:
+    2px 3px 0 rgba(42, 38, 32, 0.5), 0 6px 16px rgba(42, 38, 32, 0.09);
+  --shadow-sticker-lg:
+    3px 5px 0 rgba(42, 38, 32, 0.5), 0 12px 30px rgba(42, 38, 32, 0.12);
 }
 
-/* Paper background: warm cream + faint grid + grain */
+/* Paper background: warm cream + a calm faint grid */
 .paper-bg {
   background-color: var(--color-paper);
   background-image:
-    radial-gradient(rgba(43, 42, 40, 0.05) 1px, transparent 1px),
-    radial-gradient(rgba(43, 42, 40, 0.04) 1px, transparent 1px);
-  background-size: 22px 22px, 22px 22px;
-  background-position: 0 0, 11px 11px;
+    radial-gradient(rgba(42, 38, 32, 0.035) 1px, transparent 1px),
+    radial-gradient(rgba(42, 38, 32, 0.028) 1px, transparent 1px);
+  background-size: 26px 26px, 26px 26px;
+  background-position: 0 0, 13px 13px;
 }
 
 body {

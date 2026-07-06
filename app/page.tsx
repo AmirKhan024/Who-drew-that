@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import Logo from "@/components/ui/Logo";
 import DoodleBg from "@/components/ui/DoodleBg";
 import DoodleButton from "@/components/ui/DoodleButton";
 import StickyCard from "@/components/ui/StickyCard";
 import WobbleInput from "@/components/ui/WobbleInput";
-import DoodleAvatar from "@/components/ui/DoodleAvatar";
 import { getIdentity, randomAvatarSeed, saveIdentity } from "@/lib/identity";
 
 export default function Home() {
@@ -53,27 +53,8 @@ export default function Home() {
         </motion.p>
       </div>
 
-      <StickyCard color="paper" tilt={-1} seed={21} className="mt-6 w-full max-w-sm">
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-end gap-3">
-            <motion.div
-              key={seed}
-              initial={{ scale: 0.7, rotate: -12 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 12 }}
-            >
-              <DoodleAvatar seed={seed} size={80} />
-            </motion.div>
-            <button
-              onClick={() => setSeed(randomAvatarSeed())}
-              className="font-display mb-1 cursor-pointer rounded-full px-2 py-1 text-lg text-ink-soft transition hover:rotate-12 hover:text-crayon-purple"
-              aria-label="Shuffle avatar"
-              title="Shuffle avatar"
-            >
-              🎲
-            </button>
-          </div>
-
+      <StickyCard color="paper" tilt={-1} seed={21} className="mt-7 w-full max-w-sm">
+        <div className="flex flex-col items-center gap-5">
           <WobbleInput
             aria-label="Your name"
             placeholder="Your name…"
@@ -115,7 +96,14 @@ export default function Home() {
         </div>
       </StickyCard>
 
-      <p className="font-hand mt-8 text-center text-base text-ink-soft/70">
+      <Link
+        href="/how-to-play"
+        className="font-hand mt-6 text-lg text-ink-soft underline decoration-wavy underline-offset-4 transition hover:text-crayon-purple"
+      >
+        How to play?
+      </Link>
+
+      <p className="font-hand mt-3 text-center text-base text-ink-soft/60">
         3+ players · draw · bluff · vote · repeat
       </p>
     </main>

@@ -45,8 +45,8 @@ export interface RoughBoxProps {
 export default function RoughBox({
   fill,
   stroke = "var(--color-ink)",
-  strokeWidth = 2.4,
-  roughness = 1.5,
+  strokeWidth = 2.2,
+  roughness = 1.05,
   radius = 14,
   seed = 42,
   fillStyle = "solid",
@@ -86,7 +86,7 @@ export default function RoughBox({
       stroke,
       strokeWidth,
       roughness,
-      bowing: 1.4,
+      bowing: 0.8,
       seed,
       ...(fill
         ? { fill, fillStyle, fillWeight: 3, hachureGap: 6 }

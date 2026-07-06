@@ -90,6 +90,10 @@ export default function WordCard({
                 <p className="font-hand mt-3 text-lg text-ink-soft">
                   Draw it together — one imposter is faking it. 👀
                 </p>
+                <p className="font-hand mt-2 rounded-lg bg-black/5 px-2 py-1 text-base text-ink-soft">
+                  💡 Hint at it — don&apos;t draw it too obviously, or the imposter
+                  will figure out the word!
+                </p>
               </>
             )}
           </StickyCard>
